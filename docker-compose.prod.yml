@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+
+  nginx:
+    image: nginx:1.23
+    ports:
+      - 80:80
+    volumes:
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+    depends_on:
+      - node
+      - mongo
+      - peer
+    restart: "always"
+
+  node:
+    build:
+      context: ./
+      dockerfile: dockerfile
+    restart: "always"
+
+  mongo:
+    image: mongo:6.0.6
+    volumes: 
+      - ./docker/volumes/mongo:/data/db
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: prism
+      MONGO_INITDB_ROOT_PASSWORD: password
+
+  peer:
+    image: peerjs/peerjs-server:1.0.0
+    restart: "always"
+

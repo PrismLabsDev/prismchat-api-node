@@ -16,6 +16,9 @@ cp .env.example .env
 ts-node ./app/scripts/generateKeys.ts # set .env properties to corresponding values
 npm run dev
 
+# Stop docker
+docker-compose -f docker-compose.dev.yml down
+
 # Run tests
 npm run test
 ```

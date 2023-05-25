@@ -1,12 +1,6 @@
 import server from './server';
 import database from './database';
-
-import sodiumLib from './sodium';
-
-// Models
-import AuthRequest from './models/AuthRequest';
-import Message from './models/Message';
-import sodium from './sodium';
+import schedule from './schedule';
 
 // Boot function
 (async function () {
@@ -16,7 +10,7 @@ import sodium from './sodium';
 
   // Run server
   server.listen(async () => {
-    // Runs before listen occurs
+    schedule.run();
   });
 })();
 

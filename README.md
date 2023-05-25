@@ -13,6 +13,7 @@ docker-compose -f docker-compose.dev.yml up -d --build
 # Start app
 npm install
 cp .env.example .env
+ts-node ./app/scripts/generateKeys.ts # set .env properties to corresponding values
 npm run dev
 
 # Run tests
@@ -25,6 +26,7 @@ We have configured a custom docker image as well as Nginx config to build and se
 
 ``` bash
 cp .env.example .env
+docker exec prismchat-api-node-node-1 ts-node ./app/scripts/generateKeys.ts # set .env properties to corresponding values
 docker-compose -f docker-compose.prod.yml up -d --build
 ```
 

@@ -1,9 +1,12 @@
 import server from './server';
 import database from './database';
 
+import sodiumLib from './sodium';
+
 // Models
 import AuthRequest from './models/AuthRequest';
 import Message from './models/Message';
+import sodium from './sodium';
 
 // Boot function
 (async function () {
@@ -12,6 +15,8 @@ import Message from './models/Message';
   await database.connect(connectionString);
 
   // Run server
-  server.listen();
+  server.listen(async () => {
+    // Runs before listen occurs
+  });
 })();
 

@@ -1,11 +1,21 @@
 import { Request, Response, Router } from 'express';
 
 // Controllers
-import IndexController from './controllers/IndexController';
+import AuthController from './controllers/AuthController';
+import MessageController from './controllers/MessageController';
+
+// Middleware
+import AuthenticateJWT from './middleware/AuthenticateJWT';
 
 const router = Router();
 
-// Routes
-router.get('/', IndexController.index);
+// Auth
+router.get('/auth/pubkey', AuthController.pubkey);
+router.post('/auth/request', AuthController.request);
+router.post('/auth/verify', AuthController.verify);
+
+// Message
+router.get('/message', AuthenticateJWT, MessageController.receive);
+router.post('/message', MessageController.send);
 
 export default router;

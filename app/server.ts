@@ -20,9 +20,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors(CorsConfig));
 
 // Routes
-app.use('/', routes);
+app.use('/api/v1', routes);
 
-const listen = (): void => {
+const listen = async (cb: any) => {
+  await cb();
+  
 	app.listen(port, () => {
 		console.log(`Server started on port ${port}`);
 		console.log(`Available on your local network at ${address.ip()}:${port}`);

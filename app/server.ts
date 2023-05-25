@@ -4,12 +4,17 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-import routes from './routes';
+// Global middleware
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import rateLimit from 'express-rate-limit'
+
+// Routes
+import routesAPIV1 from './routes/api';
 
 // Config
-import CorsConfig from './config/cors';
+import corsConfig from './config/cors';
+import rateLimitConfig from './config/rateLimit';
 
 const port = process.env.PORT;
 const app = express();
@@ -17,17 +22,19 @@ const app = express();
 // Global Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors(CorsConfig));
+app.use(cors(corsConfig));
+app.use(rateLimit(rateLimitConfig))
 
 // Routes
-app.use('/api/v1', routes);
+app.use('/api/v1', routesAPIV1);
 
-const listen = async (cb: any) => {
-  await cb();
+const listen = async (setup: any) => {
+  await setup();
   
 	app.listen(port, () => {
 		console.log(`Server started on port ${port}`);
-		console.log(`Available on your local network at ${address.ip()}:${port}`);
+    console.log(`Available on your local computer at http://localhost:${port}`);
+		console.log(`Available on your local network at http://${address.ip()}:${port}`);
 	});
 };
 

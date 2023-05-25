@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import IRequest from '../interfaces/IRequest';
-import sodiumLib from '../sodium';
+import IRequest from '../../interfaces/IRequest';
+import sodiumLib from '../../sodium';
 import jwt from 'jsonwebtoken';
 
-import AuthRequest from '../models/AuthRequest';
+import AuthRequest from '../../models/AuthRequest';
 
 const randomString = (min: number = 50, max: number = 60): string => {
   const length = Math.floor(Math.random() * (max - min + 1) + min);

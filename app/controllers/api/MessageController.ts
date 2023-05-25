@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import IRequest from '../interfaces/IRequest';
+import IRequest from '../../interfaces/IRequest';
 
-import Message from '../models/Message';
+import Message from '../../models/Message';
 
 const send = async (req: IRequest, res: Response) => {
 

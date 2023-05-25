@@ -1,11 +1,11 @@
 import { Request, Response, Router } from 'express';
 
 // Controllers
-import AuthController from './controllers/AuthController';
-import MessageController from './controllers/MessageController';
+import AuthController from '../controllers/api/AuthController';
+import MessageController from '../controllers/api/MessageController';
 
 // Middleware
-import AuthenticateJWT from './middleware/AuthenticateJWT';
+import AuthenticateJWT from '../middleware/AuthenticateJWT';
 
 const router = Router();
 

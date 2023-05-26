@@ -2,27 +2,41 @@ version: '3.8'
 
 services:
 
+  maintenance:
+    build:
+      context: ./
+      dockerfile: maintenance.dockerfile
+    restart: always
+    volumes:
+      - ./docker/volumes/maintenance/certbot:/var/certbot/
+      - ./docker/volumes/maintenance/letsencrypt/:/etc/letsencrypt/
+    depends_on:
+      - nginx
+
   nginx:
     image: nginx:1.23
     ports:
       - 80:80
     volumes:
       - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+      - ./docker/volumes/maintenance/certbot:/var/certbot/
+      - ./docker/volumes/maintenance/letsencrypt/:/etc/nginx/ssl/
     depends_on:
       - node
-      - mongo
-      - peer
     restart: "always"
 
   node:
     build:
       context: ./
-      dockerfile: dockerfile
+      dockerfile: node.dockerfile
+    depends_on:
+      - mongo
+      - peer
     restart: "always"
 
   mongo:
     image: mongo:6.0.6
-    volumes: 
+    volumes:
       - ./docker/volumes/mongo:/data/db
     restart: always
     environment:
@@ -31,5 +45,6 @@ services:
 
   peer:
     image: peerjs/peerjs-server:1.0.0
+    ports:
+      - 9000:9000
     restart: "always"
-

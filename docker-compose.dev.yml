@@ -2,20 +2,19 @@ version: '3.8'
 
 services:
 
-  prism-mongo:
+  mongo:
     image: mongo:6.0.6
     ports:
       - 27017:27017
-    volumes: 
+    volumes:
       - ./docker/volumes/mongo:/data/db
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: prism
       MONGO_INITDB_ROOT_PASSWORD: password
 
-  prism-peer:
+  peer:
     image: peerjs/peerjs-server:1.0.0
     ports:
       - 9000:9000
     restart: "always"
-

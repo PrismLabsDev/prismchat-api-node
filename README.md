@@ -33,7 +33,55 @@ docker exec prismchat-api-node-node-1 ts-node ./app/scripts/generateKeys.ts # se
 docker-compose -f docker-compose.prod.yml up -d --build
 ```
 
-## Graceful update
+## Base Configuration
+
+Before we can start the project it requires some very basic configuration. Mainly to allow our domain to be routed to the server.
+
+1. Open ```docker/config/nginx/conf.d/sites.conf``` and replace every ```api1.prism.chat``` to your actual domain.
+2. Add the following DNS records to make everything work:
+
+    | Type  | Name  |   Content   |
+    | :---: | :---: | :---------: |
+    |   A   | api1  | \<ServerIP> |
+
+3. Start the docker environment! This will make the api available on port 80 (HTTP, NOT HTTPS).
+
+    ``` bash
+    # Start and Stop docker compose
+    docker-compose -f docker-compose.prod.yml up -d --build
+    docker-compose -f docker-compose.prod.yml down
+
+    # View status of docker containers
+    docker ps -a
+    docker logs <container name>
+
+    # Reload Nginx configuration wth zero downtime (Useful for SSL config)
+    docker exec prismchat-api-node_nginx_1 nginx -s reload
+
+    # Reset environment
+    rm -rf ./docker/volumes
+    docker system prune -a
+    ```
+
+## SSL Configuration
+
+This project uses certbot to easily install and configure SSL certificates. You can obtain ssl certificates using the "maintenance" container, and will automatically manage certificate renewal. Run the certbot commands replacing ```api1.prism.chat``` with your actual domain.
+
+``` bash
+# Test certbot obtaining SSL certificate
+docker exec -i prismchat-api-maintenance-1 certbot certonly --webroot --webroot-path /var/certbot/ -d api1.prism.chat --dry-run -v
+
+## Actually obtain certificate
+docker exec -i prismchat-api-maintenance-1 certbot certonly --webroot --webroot-path /var/certbot/ -d api1.prism.chat
+```
+
+After SSL certificates have been obtained you will need to change the Nginx configuration files to take advantage of HTTPS. Follow the instuctions in the configuration files located at ```docker/config/nginx/conf.d```. Then reload Nginx.
+
+``` bash
+docker exec prismchat-api-nginx-1 nginx -s reload
+```
+
+### Graceful update
 
 **Master branch should always reflect that latest stable version!**
 

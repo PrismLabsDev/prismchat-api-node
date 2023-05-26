@@ -1,11 +1,32 @@
 import { Request, Response } from 'express';
 import IRequest from '../../interfaces/IRequest';
+import webPush from 'web-push';
 
 import Message from '../../models/Message';
+import PushSubscription from '../../models/PushSubscription';
 
 const send = async (req: IRequest, res: Response) => {
 
   await Message.create({ recipient: req.body.to, message: req.body.data });
+
+  const pushSubscription = await PushSubscription.findOne({publicKey: req.body.to});
+
+  if(pushSubscription){
+
+    await webPush.sendNotification (
+      pushSubscription,
+      JSON.stringify ({
+        type: 'M'
+      }),
+      {
+        vapidDetails: {
+          subject: 'mailto:myemail@example.com',
+          publicKey: process.env.VAPID_PUB || '',
+          privateKey: process.env.VAPID_PRV || '',
+        },
+      }
+    );
+  }
 
 	res
 		.json({

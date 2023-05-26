@@ -1,4 +1,5 @@
-import sodiumLib from "../sodium";
+import sodiumLib from "../lib/sodiumLib";
+import webpush from "web-push";
 
 const generateKeysJWT = async () => {
   const sodium = await sodiumLib.init();
@@ -18,11 +19,18 @@ const generateKeysAuth = async () => {
   }
 }
 
+const generateKeysVAPID = async () => {
+  return webpush.generateVAPIDKeys();
+}
+
 (async() => {
   const keysJWT = await generateKeysJWT();
   const keysAuth = await generateKeysAuth();
+  const keysVAPID = await generateKeysVAPID();
   console.log(`JWT_PUB: ${keysJWT.publicKey}`);
   console.log(`JWT_PRV: ${keysJWT.privateKey}`);
   console.log(`AUTH_PUB: ${keysAuth.publicKey}`);
   console.log(`AUTH_PRV: ${keysAuth.privateKey}`);
+  console.log(`VAPID_PUB: ${keysVAPID.publicKey}`);
+  console.log(`VAPID_PRV: ${keysVAPID.privateKey}`);
 })();

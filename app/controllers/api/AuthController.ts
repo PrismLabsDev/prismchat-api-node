@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import IRequest from '../../interfaces/IRequest';
-import sodiumLib from '../../sodium';
+import sodiumLib from '../../lib/sodiumLib';
 import jwt from 'jsonwebtoken';
 
 import AuthRequest from '../../models/AuthRequest';

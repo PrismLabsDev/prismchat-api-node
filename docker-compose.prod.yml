@@ -36,8 +36,6 @@ services:
 
   mongo:
     image: mongo:6.0.6
-    ports:
-      - 27017:27017
     volumes:
       - ./docker/volumes/mongo:/data/db
     restart: always

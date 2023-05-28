@@ -1,7 +1,7 @@
 export default {
-  origin: "*",
-  methods: ['GET','PUT','PATCH','POST','DELETE'],
-  allowedHeaders: ['Authorization'],
-  "preflightContinue": false,
+  origin: '*',
+  methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Authorization', 'Content-Type'],
+  "preflightContinue": true,
   "optionsSuccessStatus": 204
 };

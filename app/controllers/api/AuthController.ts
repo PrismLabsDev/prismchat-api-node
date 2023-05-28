@@ -28,11 +28,11 @@ const pubkey = async (req: IRequest, res: Response) => {
 };
 
 const request = async (req: IRequest, res: Response) => {
-  // Generate new verification string
-  const verificationString = randomString();
-
   // Remove all existing verifications that match requesting pubkey
   await AuthRequest.deleteMany({publicKey: req.body.pubkey});
+  
+  // Generate new verification string
+  const verificationString = randomString();
 
   // Create new request record
   await AuthRequest.create({ publicKey: req.body.pubkey, verificationString: verificationString });
@@ -54,52 +54,67 @@ const verify = async (req: IRequest, res: Response) => {
 
   const verificationRecord = await AuthRequest.findOne({publicKey: req.body.pubkey});
 
-  const decryptedCypher = JSON.parse(
-    sodium.to_string(
-      sodium.crypto_box_open_easy(
-        sodium.from_base64(
-          req.body.cypher,
-          sodium.base64_variants.URLSAFE_NO_PADDING
-        ),
-        sodium.from_base64(
-          req.body.nonce,
-          sodium.base64_variants.URLSAFE_NO_PADDING
-        ),
-        sodium.from_base64(
-          verificationRecord?.publicKey || '',
-          sodium.base64_variants.URLSAFE_NO_PADDING
-        ),
-        privateKeyAuth
+  console.log(req.body);
+  console.log(verificationRecord);
+
+  try {
+    const decryptedCypher = JSON.parse(
+      sodium.to_string(
+        sodium.crypto_box_open_easy(
+          sodium.from_base64(
+            req.body.cypher,
+            sodium.base64_variants.URLSAFE_NO_PADDING
+          ),
+          sodium.from_base64(
+            req.body.nonce,
+            sodium.base64_variants.URLSAFE_NO_PADDING
+          ),
+          sodium.from_base64(
+            verificationRecord?.publicKey || '',
+            sodium.base64_variants.URLSAFE_NO_PADDING
+          ),
+          privateKeyAuth
+        )
       )
-    )
-  );
-
-  if(decryptedCypher.verificationString === verificationRecord?.verificationString){
-
-    const token = jwt.sign({
-      data: {}
-    }, process.env.JWT_PRV || '', { 
-      issuer: "prism.chat", 
-      audience: verificationRecord?.publicKey, 
-      expiresIn: '24h' 
-    });
-
-    await AuthRequest.deleteMany({publicKey: req.body.pubkey});
-
+    );
+  
+    if(decryptedCypher.verificationString === verificationRecord?.verificationString){
+  
+      const token = jwt.sign({
+        data: {}
+      }, process.env.JWT_PRV || '', { 
+        issuer: "prism.chat", 
+        audience: verificationRecord?.publicKey, 
+        expiresIn: '24h' 
+      });
+  
+      await AuthRequest.deleteMany({publicKey: req.body.pubkey});
+  
+      return res
+      .json({
+        message: 'Authentication Verified.',
+        access_token: token
+      })
+      .status(200);
+    } else {
+      await AuthRequest.deleteMany({publicKey: req.body.pubkey});
+      return res
+      .json({
+        message: 'Verification string does not match.',
+      })
+      .status(401);
+    }
+  } catch (error) {
+    console.log(error);
     return res
-		.json({
-			message: 'Authentication Verified.',
-      access_token: token
-		})
-		.status(200);
-  } else {
-    await AuthRequest.deleteMany({publicKey: req.body.pubkey});
-    return res
-		.json({
-			message: 'Verification string does not match.',
-		})
-		.status(401);
+      .status(401)
+      .json({
+        message: 'You could not be verified',
+      });
+      
   }
+
+  
 };
 
 export default {

@@ -23,7 +23,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors(corsConfig));
-app.use(rateLimit(rateLimitConfig))
+// app.use(rateLimit(rateLimitConfig))
 
 // Routes
 app.use('/api/v1', routesAPIV1);

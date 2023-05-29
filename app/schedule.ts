@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 // Models
 import AuthRequest from "./models/AuthRequest";
 import Message from "./models/Message";
+import PushSubscription from "./models/PushSubscription";
 
 const run = () => {
   // Test job every second
@@ -17,6 +18,7 @@ const run = () => {
     const backTime = new Date(dayjs().subtract(30, 'days').valueOf());
     AuthRequest.deleteMany({ createdAt: {"$lt" : backTime}})
     Message.deleteMany({ createdAt: {"$lt" : backTime}})
+    PushSubscription.deleteMany({ createdAt: {"$lt" : backTime}})
   });
 }
 

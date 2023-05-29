@@ -1,4 +1,4 @@
-import sodiumLib from "../lib/sodiumLib";
+import sodiumLib from "../utility/sodiumLib";
 import webpush from "web-push";
 
 const generateKeysJWT = async () => {

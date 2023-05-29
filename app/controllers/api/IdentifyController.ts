@@ -1,21 +1,26 @@
 import { Request, Response } from 'express';
 import IRequest from '../../interfaces/IRequest';
-import sodiumLib from '../../lib/sodiumLib';
-import jwt from 'jsonwebtoken';
-
-import AuthRequest from '../../models/AuthRequest';
+import {log} from '../../utility/log';
+import {validate} from '../../utility/requestValidator';
 
 const identify = async (req: IRequest, res: Response) => {
-	return res
-		.json({
-			message: 'Server Public Identity Keys.',
+  try {
+    return res.status(200).json({
+      message: 'Server Public Identity Keys.',
       keys: {
         jwt: process.env.JWT_PUB,
         auth: process.env.AUTH_PUB,
         vapid: process.env.VAPID_PUB,
       }
-		})
-		.status(200);
+    });
+  } catch (error) {
+    log({
+      error: error
+    });
+    return res.status(500).json({
+			message: 'Server error.',
+		});
+  }
 };
 
 export default {

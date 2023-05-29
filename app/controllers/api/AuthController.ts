@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
 import IRequest from '../../interfaces/IRequest';
-import sodiumLib from '../../lib/sodiumLib';
+import sodiumLib from '../../utility/sodiumLib';
 import jwt from 'jsonwebtoken';
+import {log} from '../../utility/log';
+import {validate} from '../../utility/requestValidator';
 
 import AuthRequest from '../../models/AuthRequest';
 
@@ -18,46 +20,67 @@ const randomString = (min: number = 50, max: number = 60): string => {
 }
 
 const pubkey = async (req: IRequest, res: Response) => {
-	return res
-		.json({
+  try {
+    return res.status(200).json({
 			message: 'Server Public Key.',
       auth_pubkey: process.env.AUTH_PUB,
       jwt_pubkey: process.env.JWT_PUB  
-		})
-		.status(200);
+		});
+  } catch (error) {
+    log({
+      error: error
+    });
+    return res.status(500).json({
+			message: 'Server error.',
+		});
+  }
 };
 
 const request = async (req: IRequest, res: Response) => {
-  // Remove all existing verifications that match requesting pubkey
-  await AuthRequest.deleteMany({publicKey: req.body.pubkey});
-  
-  // Generate new verification string
-  const verificationString = randomString();
+  const validationError = validate(req, res, ['pubkey']);
+  if(validationError){
+    return res.status(422).json(validationError);
+  }
 
-  // Create new request record
-  await AuthRequest.create({ publicKey: req.body.pubkey, verificationString: verificationString });
-	return res
-		.json({
-			message: 'Requesting Authentication.',
+  try {
+    // Remove all existing verifications that match requesting pubkey
+    await AuthRequest.deleteMany({publicKey: req.body.pubkey});
+      
+    // Generate new verification string
+    const verificationString = randomString();
+
+    // Create new request record
+    await AuthRequest.create({ publicKey: req.body.pubkey, verificationString: verificationString });
+
+    return res.status(200).json({
+      message: 'Requesting Authentication.',
       serverPublicKey: process.env.AUTH_PUB,
       verificationString: verificationString
-		})
-		.status(200);
+    });
+  } catch (error) {
+    log({
+      error: error
+    });
+    return res.status(500).json({
+			message: 'Server error.',
+		});
+  }
 };
 
 const verify = async (req: IRequest, res: Response) => {
-
-  const sodium = await sodiumLib.init();
-
-  const publicKeyAuth = sodium.from_base64(process.env.AUTH_PUB || '', sodium.base64_variants.URLSAFE_NO_PADDING);
-  const privateKeyAuth = sodium.from_base64(process.env.AUTH_PRV || '', sodium.base64_variants.URLSAFE_NO_PADDING);
-
-  const verificationRecord = await AuthRequest.findOne({publicKey: req.body.pubkey});
-
-  console.log(req.body);
-  console.log(verificationRecord);
-
+  const validationError = validate(req, res, ['cypher', 'nonce', 'pubkey']);
+  if(validationError){
+    return res.status(422).json(validationError);
+  }
   try {
+    const sodium = await sodiumLib.init();
+
+    const publicKeyAuth = sodium.from_base64(process.env.AUTH_PUB || '', sodium.base64_variants.URLSAFE_NO_PADDING);
+    const privateKeyAuth = sodium.from_base64(process.env.AUTH_PRV || '', sodium.base64_variants.URLSAFE_NO_PADDING);
+  
+    const verificationRecord = await AuthRequest.findOne({ publicKey: req.body.pubkey }).sort({ createdAt: -1 }).exec();
+    await AuthRequest.deleteMany({ publicKey: req.body.pubkey });
+
     const decryptedCypher = JSON.parse(
       sodium.to_string(
         sodium.crypto_box_open_easy(
@@ -88,33 +111,24 @@ const verify = async (req: IRequest, res: Response) => {
         expiresIn: '24h' 
       });
   
-      await AuthRequest.deleteMany({publicKey: req.body.pubkey});
-  
-      return res
-      .json({
+      return res.status(200).json({
         message: 'Authentication Verified.',
         access_token: token
-      })
-      .status(200);
+      });
     } else {
-      await AuthRequest.deleteMany({publicKey: req.body.pubkey});
-      return res
-      .json({
+      return res.status(401).json({
         message: 'Verification string does not match.',
-      })
-      .status(401);
+      });
     }
   } catch (error) {
     console.log(error);
-    return res
-      .status(401)
-      .json({
-        message: 'You could not be verified',
-      });
-      
-  }
-
-  
+    log({
+      error: error
+    });
+    return res.status(500).json({
+			message: 'Server error.',
+		});
+  }  
 };
 
 export default {

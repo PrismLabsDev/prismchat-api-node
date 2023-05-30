@@ -23,10 +23,10 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors(corsConfig));
-// app.use(rateLimit(rateLimitConfig))
+app.use(rateLimit(rateLimitConfig))
 
 // Routes
-app.use('/api/v1', routesAPIV1);
+app.use('/', routesAPIV1);
 
 const listen = async (setup: any) => {
   await setup();

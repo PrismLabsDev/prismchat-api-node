@@ -33,10 +33,10 @@ jobs:
 
       - name: "Build and Tag Image"
         run: |
-          docker build . -t ghcr.io/PrismLabsDev/prismchat-api-node:${{ steps.tag.outputs.tag }}
-          docker tag ghcr.io/PrismLabsDev/prismchat-api-node:${{ steps.tag.outputs.tag }} ghcr.io/PrismLabsDev/prismchat-api-node:latest
+          docker build . -t ghcr.io/prismlabsdev/prismchat-api-node:${{ steps.tag.outputs.tag }}
+          docker tag ghcr.io/prismlabsdev/prismchat-api-node:${{ steps.tag.outputs.tag }} ghcr.io/prismlabsdev/prismchat-api-node:latest
 
       - name: "Push Image to GHCR"
         run: |
-          docker push ghcr.io/PrismLabsDev/prismchat-api-node:${{ steps.tag.outputs.tag }}
-          docker push ghcr.io/PrismLabsDev/prismchat-api-node:latest
+          docker push ghcr.io/prismlabsdev/prismchat-api-node:${{ steps.tag.outputs.tag }}
+          docker push ghcr.io/prismlabsdev/prismchat-api-node:latest

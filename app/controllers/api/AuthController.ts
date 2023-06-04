@@ -28,9 +28,6 @@ const pubkey = async (req: IRequest, res: Response) => {
 		});
   } catch (error) {
     console.error(error);
-    log({
-      error: error
-    });
     return res.status(500).json({
 			message: 'Server error.',
 		});
@@ -60,9 +57,6 @@ const request = async (req: IRequest, res: Response) => {
     });
   } catch (error) {
     console.error(error);
-    log({
-      error: error
-    });
     return res.status(500).json({
 			message: 'Server error.',
 		});
@@ -123,10 +117,7 @@ const verify = async (req: IRequest, res: Response) => {
       });
     }
   } catch (error) {
-    console.log(error);
-    log({
-      error: error
-    });
+    console.error(error);
     return res.status(500).json({
 			message: 'Server error.',
 		});

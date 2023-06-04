@@ -15,9 +15,6 @@ const identify = async (req: IRequest, res: Response) => {
     });
   } catch (error) {
     console.error(error);
-    log({
-      error: error
-    });
     return res.status(500).json({
 			message: 'Server error.',
 		});

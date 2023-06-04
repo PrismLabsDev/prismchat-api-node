@@ -28,6 +28,7 @@ const subscribe = async (req: IRequest, res: Response) => {
       message: 'Subscribed to push notifications.'
     });
   } catch (error) {
+    console.error(error);
     log({
       error: error
     });
@@ -45,6 +46,7 @@ const unsubscribe = async (req: IRequest, res: Response) => {
       message: 'Unsubscribed to push notifications.'
     });
   } catch (error) {
+    console.error(error);
     log({
       error: error
     });

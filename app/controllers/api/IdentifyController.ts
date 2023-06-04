@@ -14,6 +14,7 @@ const identify = async (req: IRequest, res: Response) => {
       }
     });
   } catch (error) {
+    console.error(error);
     log({
       error: error
     });

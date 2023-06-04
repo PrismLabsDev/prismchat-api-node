@@ -37,6 +37,7 @@ const send = async (req: IRequest, res: Response) => {
       message: 'Message sent.',
     });
   } catch (error) {
+    console.error(error);
     log({
       error: error
     });
@@ -56,6 +57,7 @@ const receive = async (req: IRequest, res: Response) => {
       messages: allMessages
     });
   } catch (error) {
+    console.error(error);
     log({
       error: error
     });

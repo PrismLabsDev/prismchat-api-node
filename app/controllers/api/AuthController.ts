@@ -27,6 +27,7 @@ const pubkey = async (req: IRequest, res: Response) => {
       jwt_pubkey: process.env.JWT_PUB  
 		});
   } catch (error) {
+    console.error(error);
     log({
       error: error
     });
@@ -58,6 +59,7 @@ const request = async (req: IRequest, res: Response) => {
       verificationString: verificationString
     });
   } catch (error) {
+    console.error(error);
     log({
       error: error
     });

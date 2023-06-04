@@ -6,9 +6,6 @@ on:
   push:
     branches:
       - main
-    tags:
-      - "v*"
-      - "V*"
 
 jobs:
   push-store-image:
@@ -36,7 +33,7 @@ jobs:
 
       - name: "Build and Tag Image"
         run: |
-          docker build -t ghcr.io/prismlabsdev/prismchat-api-node:${{ steps.tag.outputs.tag }}
+          docker build . -t ghcr.io/prismlabsdev/prismchat-api-node:${{ steps.tag.outputs.tag }}
           docker tag ghcr.io/prismlabsdev/prismchat-api-node:${{ steps.tag.outputs.tag }} ghcr.io/prismlabsdev/prismchat-api-node:latest
 
       - name: "Push Image to GHCR"

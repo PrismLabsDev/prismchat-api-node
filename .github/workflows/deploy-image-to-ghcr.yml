@@ -1,0 +1,45 @@
+name: Deploy Image to GHCR
+
+run-name: Deploy Image to GHCR!
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+      - "V*"
+
+jobs:
+  push-store-image:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Checkout Main Branch"
+        uses: actions/checkout@v2
+        with:
+          ref: "refs/heads/main"
+
+      - name: Get Current Commit Tag
+        id: tag
+        uses: devops-actions/action-get-tag@v1.0.1
+        with:
+          strip_v: true # Optional: Remove 'v' character from version
+          default: v0.0.0 # Optional: Default version when tag not found
+
+      - name: Login to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Build and Tag Image"
+        run: |
+          docker build -t ghcr.io/PrismLabsDev/prismchat-api-node:${{ steps.tag.outputs.tag }}
+          docker tag ghcr.io/PrismLabsDev/prismchat-api-node:${{ steps.tag.outputs.tag }} ghcr.io/PrismLabsDev/prismchat-api-node:latest
+
+      - name: "Push Image to GHCR"
+        run: |
+          docker push ghcr.io/PrismLabsDev/prismchat-api-node:${{ steps.tag.outputs.tag }}
+          docker push ghcr.io/PrismLabsDev/prismchat-api-node:latest

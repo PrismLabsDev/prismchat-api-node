@@ -1,2 +1,0 @@
-0 23 * * * echo "Renewed certificates: `date`" > /var/log/cron
-0 23 * * * certbot renew

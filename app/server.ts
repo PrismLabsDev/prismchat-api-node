@@ -10,7 +10,7 @@ import cors from 'cors';
 import rateLimit from 'express-rate-limit'
 
 // Routes
-import routesAPIV1 from './routes/api';
+import routesAPI from './routes/api';
 
 // Config
 import corsConfig from './config/cors';
@@ -26,7 +26,7 @@ app.use(cors(corsConfig));
 app.use(rateLimit(rateLimitConfig))
 
 // Routes
-app.use('/', routesAPIV1);
+app.use('/', routesAPI);
 
 const listen = async (setup: any) => {
   await setup();

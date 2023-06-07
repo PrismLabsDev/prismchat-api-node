@@ -20,9 +20,6 @@ const send = async (req: IRequest, res: Response) => {
     const VAPID_PUB: string = process.env.VAPID_PUB || '';
     const VAPID_PRV: string = process.env.VAPID_PRV || '';
 
-    console.log(`VAPID_PUB: ${VAPID_PUB}`);
-    console.log(`VAPID_PRV: ${VAPID_PRV}`);
-
     if(pushSubscription){
       await webPush.sendNotification (
         pushSubscription,

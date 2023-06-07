@@ -17,6 +17,12 @@ const send = async (req: IRequest, res: Response) => {
     await Message.create({ recipient: req.body.to, message: req.body.data });
     const pushSubscription = await PushSubscription.findOne({publicKey: req.body.to});
 
+    const VAPID_PUB: string = process.env.VAPID_PUB || '';
+    const VAPID_PRV: string = process.env.VAPID_PRV || '';
+
+    console.log(`VAPID_PUB: ${VAPID_PUB}`);
+    console.log(`VAPID_PRV: ${VAPID_PRV}`);
+
     if(pushSubscription){
       await webPush.sendNotification (
         pushSubscription,
@@ -25,9 +31,9 @@ const send = async (req: IRequest, res: Response) => {
         }),
         {
           vapidDetails: {
-            subject: 'mailto:myemail@example.com',
-            publicKey: process.env.VAPID_PUB || '',
-            privateKey: process.env.VAPID_PRV || '',
+            subject: `https://${process.env.URL}`,
+            publicKey: VAPID_PUB,
+            privateKey: VAPID_PRV,
           },
         }
       );

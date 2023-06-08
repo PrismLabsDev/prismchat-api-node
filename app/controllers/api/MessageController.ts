@@ -9,12 +9,21 @@ import PushSubscription from '../../models/PushSubscription';
 
 const send = async (req: IRequest, res: Response) => {
   const validationError = validate(req, res, ['to', 'data']);
+  
   if(validationError){
     return res.status(422).json(validationError);
   }
   
   try {
     await Message.create({ recipient: req.body.to, message: req.body.data });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+			message: 'Server error.',
+		});
+  }
+
+  try {
     const pushSubscription = await PushSubscription.findOne({publicKey: req.body.to});
 
     const VAPID_PUB: string = process.env.VAPID_PUB || '';
@@ -35,16 +44,13 @@ const send = async (req: IRequest, res: Response) => {
         }
       );
     }
-  
-    res.status(200).json({
-      message: 'Message sent.',
-    });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({
-			message: 'Server error.',
-		});
   }
+
+  return res.status(200).json({
+    message: 'Message sent.',
+  });
 };
 
 const receive = async (req: IRequest, res: Response) => {

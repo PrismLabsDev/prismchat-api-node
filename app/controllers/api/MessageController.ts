@@ -1,17 +1,22 @@
 import { Request, Response } from 'express';
 import IRequest from '../../interfaces/IRequest';
 import webPush from 'web-push';
-import {log} from '../../utility/log';
-import {validate} from '../../utility/requestValidator';
+import Joi from 'joi';
 
 import Message from '../../models/Message';
 import PushSubscription from '../../models/PushSubscription';
 
 const send = async (req: IRequest, res: Response) => {
-  const validationError = validate(req, res, ['to', 'data']);
-  
-  if(validationError){
-    return res.status(422).json(validationError);
+  try {
+    await Joi.object({
+      to: Joi.string().required(),
+      data: Joi.string().required(),
+    }).validateAsync(req.body);
+  } catch(error) {
+    return res.status(422).json({
+      message: 'Missing entity',
+      error: error
+    });
   }
   
   try {
@@ -30,6 +35,7 @@ const send = async (req: IRequest, res: Response) => {
     const VAPID_PRV: string = process.env.VAPID_PRV || '';
 
     if(pushSubscription){
+      // console.log(pushSubscription);
       await webPush.sendNotification (
         pushSubscription,
         JSON.stringify ({

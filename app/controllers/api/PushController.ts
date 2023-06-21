@@ -1,14 +1,20 @@
 import { Request, Response } from 'express';
 import IRequest from '../../interfaces/IRequest';
-import {log} from '../../utility/log';
-import {validate} from '../../utility/requestValidator';
+import Joi from 'joi';
 
 import PushSubscription from '../../models/PushSubscription';
 
 const subscribe = async (req: IRequest, res: Response) => {
-  const validationError = validate(req, res, ['endpoint', 'keys']);
-  if(validationError){
-    return res.status(422).json(validationError);
+  try {
+    await Joi.object({
+      endpoint: Joi.string().required(),
+      keys: Joi.string().required(),
+    }).validateAsync(req.body);
+  } catch(error) {
+    return res.status(422).json({
+      message: 'Missing entity',
+      error: error
+    });
   }
   
   try {

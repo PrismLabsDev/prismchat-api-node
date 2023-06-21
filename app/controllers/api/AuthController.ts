@@ -2,8 +2,7 @@ import { Request, Response } from 'express';
 import IRequest from '../../interfaces/IRequest';
 import sodiumLib from '../../utility/sodiumLib';
 import jwt from 'jsonwebtoken';
-import {log} from '../../utility/log';
-import {validate} from '../../utility/requestValidator';
+import Joi from 'joi';
 
 import AuthRequest from '../../models/AuthRequest';
 
@@ -35,9 +34,15 @@ const pubkey = async (req: IRequest, res: Response) => {
 };
 
 const request = async (req: IRequest, res: Response) => {
-  const validationError = validate(req, res, ['pubkey']);
-  if(validationError){
-    return res.status(422).json(validationError);
+  try {
+    await Joi.object({
+      pubkey: Joi.string().required()
+    }).validateAsync(req.body);
+  } catch(error) {
+    return res.status(422).json({
+      message: 'Missing entity',
+      error: error
+    });
   }
 
   try {
@@ -58,17 +63,32 @@ const request = async (req: IRequest, res: Response) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({
-			message: 'Server error.',
+			message: 'Server error.'
 		});
   }
 };
 
 const verify = async (req: IRequest, res: Response) => {
-  const validationError = validate(req, res, ['cypher', 'nonce', 'pubkey']);
-  if(validationError){
-    return res.status(422).json(validationError);
-  }
   try {
+    await Joi.object({
+      cypher: Joi.string().required(),
+      nonce: Joi.string().required(),
+      pubkey: Joi.string().required()
+    }).validateAsync(req.body);
+  } catch(error) {
+    return res.status(422).json({
+      message: 'Missing entity',
+      error: error
+    });
+  }
+
+  try {
+    await Joi.object({
+      cypher: Joi.string().required(),
+      nonce: Joi.string().required(),
+      pubkey: Joi.string().required()
+    }).validateAsync(req.body);
+
     const sodium = await sodiumLib.init();
 
     const publicKeyAuth = sodium.from_base64(process.env.AUTH_PUB || '', sodium.base64_variants.URLSAFE_NO_PADDING);

@@ -1,7 +1,5 @@
 import { Request, Response } from 'express';
 import IRequest from '../../interfaces/IRequest';
-import {log} from '../../utility/log';
-import {validate} from '../../utility/requestValidator';
 
 const identify = async (req: IRequest, res: Response) => {
   try {

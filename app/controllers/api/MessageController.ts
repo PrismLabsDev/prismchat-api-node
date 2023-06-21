@@ -31,12 +31,12 @@ const send = async (req: IRequest, res: Response) => {
   try {
     const pushSubscription = await PushSubscription.findOne({publicKey: req.body.to});
 
-    const VAPID_PUB: string = process.env.VAPID_PUB || '';
-    const VAPID_PRV: string = process.env.VAPID_PRV || '';
-
     if(pushSubscription){
-      // console.log(pushSubscription);
-      await webPush.sendNotification (
+
+      const VAPID_PUB: string = process.env.VAPID_PUB || '';
+      const VAPID_PRV: string = process.env.VAPID_PRV || '';
+
+      await webPush.sendNotification(
         pushSubscription,
         JSON.stringify ({
           type: 'M'

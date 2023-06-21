@@ -8,7 +8,8 @@ const subscribe = async (req: IRequest, res: Response) => {
   try {
     await Joi.object({
       endpoint: Joi.string().required(),
-      keys: Joi.string().required(),
+      keys: Joi.any().required(),
+      expirationTime: Joi.any().required(),
     }).validateAsync(req.body);
   } catch(error) {
     return res.status(422).json({

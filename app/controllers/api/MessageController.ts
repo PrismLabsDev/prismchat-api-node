@@ -2,11 +2,13 @@ import { Request, Response } from 'express';
 import IRequest from '../../interfaces/IRequest';
 import webPush from 'web-push';
 import Joi from 'joi';
+import { logger } from '../../utility/logger';
 
 import Message from '../../models/Message';
 import PushSubscription from '../../models/PushSubscription';
 
 const send = async (req: IRequest, res: Response) => {
+
   try {
     await Joi.object({
       to: Joi.string().required(),
@@ -51,7 +53,8 @@ const send = async (req: IRequest, res: Response) => {
       );
     }
   } catch (error) {
-    console.error(error);
+    console.log(error);
+    logger.error(error);
   }
 
   return res.status(200).json({
@@ -70,6 +73,7 @@ const receive = async (req: IRequest, res: Response) => {
     });
   } catch (error) {
     console.error(error);
+    logger.error(error);
     return res.status(500).json({
 			message: 'Server error.',
 		});

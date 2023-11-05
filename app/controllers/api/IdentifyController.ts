@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import IRequest from '../../interfaces/IRequest';
+import { logger } from '../../utility/logger';
 
 const identify = async (req: IRequest, res: Response) => {
   try {
@@ -13,6 +14,7 @@ const identify = async (req: IRequest, res: Response) => {
     });
   } catch (error) {
     console.error(error);
+    logger.error(error);
     return res.status(500).json({
 			message: 'Server error.',
 		});

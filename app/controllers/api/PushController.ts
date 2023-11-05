@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import IRequest from '../../interfaces/IRequest';
 import Joi from 'joi';
+import { logger } from '../../utility/logger';
 
 import PushSubscription from '../../models/PushSubscription';
 
@@ -36,6 +37,7 @@ const subscribe = async (req: IRequest, res: Response) => {
     });
   } catch (error) {
     console.error(error);
+    logger.error(error);
     return res.status(500).json({
 			message: 'Server error.',
 		});
@@ -51,6 +53,7 @@ const unsubscribe = async (req: IRequest, res: Response) => {
     });
   } catch (error) {
     console.error(error);
+    logger.error(error);
     return res.status(500).json({
 			message: 'Server error.',
 		});

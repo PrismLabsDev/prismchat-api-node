@@ -11,7 +11,7 @@ interface IPushSubscription {
 }
 
 const PushSubscriptionSchema = new Schema<IPushSubscription>({
-  publicKey: { type: String, required: true },
+  publicKey: { type: String, required: true, index: true },
   endpoint: { type: String, required: true },
   expirationTime: { type: Number, required: true },
   keys: {

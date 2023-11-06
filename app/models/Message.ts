@@ -6,7 +6,7 @@ interface IMessage {
 }
 
 const MessageSchema = new Schema<IMessage>({
-  recipient: { type: String, required: true },
+  recipient: { type: String, required: true, index: true },
   message: { type: String, required: true },
 }, { timestamps: true });
 

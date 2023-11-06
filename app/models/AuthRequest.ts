@@ -6,7 +6,7 @@ interface IAuthRequest {
 }
 
 const AuthRequestSchema = new Schema<IAuthRequest>({
-  publicKey: { type: String, required: true },
+  publicKey: { type: String, required: true, index: true },
   verificationString: { type: String, required: true },
 }, { timestamps: true });
 

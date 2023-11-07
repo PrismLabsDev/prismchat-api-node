@@ -7,6 +7,8 @@ import { logger } from '../../utility/logger';
 
 import AuthRequest from '../../models/AuthRequest';
 
+import allowedPublicKeys from '../../config/allowedPublicKeys';
+
 const randomString = (min: number = 50, max: number = 60): string => {
   const length = Math.floor(Math.random() * (max - min + 1) + min);
   const characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*';
@@ -45,6 +47,16 @@ const request = async (req: IRequest, res: Response) => {
       message: 'Missing entity',
       error: error
     });
+  }
+
+  const allowedPublicKeysData: string[] = allowedPublicKeys;
+
+  if(allowedPublicKeysData.length > 0){
+    if(!allowedPublicKeysData.includes(req.body.pubkey)){
+      return res.status(401).json({
+        message: 'Unauthorized.',
+      });
+    }
   }
 
   try {

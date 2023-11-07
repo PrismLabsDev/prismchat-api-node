@@ -7,6 +7,8 @@ import { logger } from '../../utility/logger';
 import Message from '../../models/Message';
 import PushSubscription from '../../models/PushSubscription';
 
+import allowedPublicKeys from '../../config/allowedPublicKeys';
+
 const send = async (req: IRequest, res: Response) => {
 
   try {
@@ -19,6 +21,16 @@ const send = async (req: IRequest, res: Response) => {
       message: 'Missing entity',
       error: error
     });
+  }
+
+  const allowedPublicKeysData: string[] = allowedPublicKeys;
+
+  if(allowedPublicKeysData.length > 0){
+    if(!allowedPublicKeysData.includes(req.body.to)){
+      return res.status(401).json({
+        message: 'Unauthorized.',
+      });
+    }
   }
   
   try {

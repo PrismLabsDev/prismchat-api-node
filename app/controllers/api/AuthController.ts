@@ -40,7 +40,7 @@ const pubkey = async (req: IRequest, res: Response) => {
 const request = async (req: IRequest, res: Response) => {
   try {
     await Joi.object({
-      pubkey: Joi.string().required()
+      Ipk: Joi.string().required()
     }).validateAsync(req.body);
   } catch(error) {
     return res.status(422).json({
@@ -52,7 +52,7 @@ const request = async (req: IRequest, res: Response) => {
   const allowedPublicKeysData: string[] = allowedPublicKeys;
 
   if(allowedPublicKeysData.length > 0){
-    if(!allowedPublicKeysData.includes(req.body.pubkey)){
+    if(!allowedPublicKeysData.includes(req.body.Ipk)){
       return res.status(401).json({
         message: 'Unauthorized.',
       });
@@ -61,13 +61,13 @@ const request = async (req: IRequest, res: Response) => {
 
   try {
     // Remove all existing verifications that match requesting pubkey
-    await AuthRequest.deleteMany({publicKey: req.body.pubkey});
+    await AuthRequest.deleteMany({publicKey: req.body.Ipk});
       
     // Generate new verification string
     const verificationString = randomString();
 
     // Create new request record
-    await AuthRequest.create({ publicKey: req.body.pubkey, verificationString: verificationString });
+    await AuthRequest.create({ publicKey: req.body.Ipk, verificationString: verificationString });
 
     return res.status(200).json({
       message: 'Requesting Authentication.',
@@ -86,9 +86,9 @@ const request = async (req: IRequest, res: Response) => {
 const verify = async (req: IRequest, res: Response) => {
   try {
     await Joi.object({
-      cypher: Joi.string().required(),
+      cipher: Joi.string().required(),
       nonce: Joi.string().required(),
-      pubkey: Joi.string().required()
+      Ipk: Joi.string().required()
     }).validateAsync(req.body);
   } catch(error) {
     return res.status(422).json({
@@ -98,25 +98,20 @@ const verify = async (req: IRequest, res: Response) => {
   }
 
   try {
-    await Joi.object({
-      cypher: Joi.string().required(),
-      nonce: Joi.string().required(),
-      pubkey: Joi.string().required()
-    }).validateAsync(req.body);
 
     const sodium = await sodiumLib.init();
 
     const publicKeyAuth = sodium.from_base64(process.env.AUTH_PUB || '', sodium.base64_variants.URLSAFE_NO_PADDING);
     const privateKeyAuth = sodium.from_base64(process.env.AUTH_PRV || '', sodium.base64_variants.URLSAFE_NO_PADDING);
   
-    const verificationRecord = await AuthRequest.findOne({ publicKey: req.body.pubkey }).sort({ createdAt: -1 }).exec();
-    await AuthRequest.deleteMany({ publicKey: req.body.pubkey });
+    const verificationRecord = await AuthRequest.findOne({ publicKey: req.body.Ipk }).sort({ createdAt: -1 }).exec();
+    await AuthRequest.deleteMany({ publicKey: req.body.Ipk });
 
     const decryptedCypher = JSON.parse(
       sodium.to_string(
         sodium.crypto_box_open_easy(
           sodium.from_base64(
-            req.body.cypher,
+            req.body.cipher,
             sodium.base64_variants.URLSAFE_NO_PADDING
           ),
           sodium.from_base64(

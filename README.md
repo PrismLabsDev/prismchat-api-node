@@ -13,7 +13,7 @@ docker-compose up -d
 # Start app
 npm install
 cp .env.example .env
-ts-node ./app/scripts/generateKeys.ts # set .env properties to corresponding values
+./node_modules/ts-node/dist/bin.js ./app/scripts/generateKeys.ts # set .env properties to corresponding values
 npm run dev
 
 # Stop docker

@@ -5,6 +5,33 @@ import { logger } from '../../utility/logger';
 
 import PushSubscription from '../../models/PushSubscription';
 
+/**
+ * @swagger
+ * tags:
+ *   name: PushSubscription
+ *   description: Manage registering browser for push notifications.
+*/
+
+/**
+ * @swagger
+ * /push/subscribe:
+ *   post:
+ *     summary: Subscribe device for push notifications.
+ *     tags: [PushSubscription]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               parameter1:
+ *                 type: string
+ *                 description: kaka
+ *     responses:
+ *       200:
+ *         description: Confirmation.
+ */
 const subscribe = async (req: IRequest, res: Response) => {
   try {
     await Joi.object({
@@ -44,6 +71,26 @@ const subscribe = async (req: IRequest, res: Response) => {
   }
 };
 
+/**
+ * @swagger
+ * /push/subscribe:
+ *   delete:
+ *     summary: Remove push subscription.
+ *     tags: [PushSubscription]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               parameter1:
+ *                 type: string
+ *                 description: kaka
+ *     responses:
+ *       200:
+ *         description: Confirmation.
+ */
 const unsubscribe = async (req: IRequest, res: Response) => {
   try {
     await PushSubscription.deleteMany({ publicKey: req.userPubKey });

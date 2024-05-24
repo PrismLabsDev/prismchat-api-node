@@ -9,6 +9,33 @@ import PushSubscription from '../../models/PushSubscription';
 
 import allowedPublicKeys from '../../config/allowedPublicKeys';
 
+/**
+ * @swagger
+ * tags:
+ *   name: Message
+ *   description: Manage sending and recieveing messages.
+*/
+
+/**
+ * @swagger
+ * /message:
+ *   post:
+ *     summary: Send a message to a user registered at this server.
+ *     tags: [Message]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               parameter1:
+ *                 type: string
+ *                 description: kaka
+ *     responses:
+ *       200:
+ *         description: Message confirmation.
+ */
 const send = async (req: IRequest, res: Response) => {
 
   try {
@@ -74,6 +101,26 @@ const send = async (req: IRequest, res: Response) => {
   });
 };
 
+/**
+ * @swagger
+ * /message:
+ *   get:
+ *     summary: Get all messages sent to you.
+ *     tags: [Message]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               parameter1:
+ *                 type: string
+ *                 description: kaka
+ *     responses:
+ *       200:
+ *         description: List of messages.
+ */
 const receive = async (req: IRequest, res: Response) => {
   try {
     const allMessages = await Message.find({recipient: req.userPubKey}).exec();

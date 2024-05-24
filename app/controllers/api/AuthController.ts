@@ -8,6 +8,12 @@ import { logger } from '../../utility/logger';
 import AuthRequest from '../../models/AuthRequest';
 
 import allowedPublicKeys from '../../config/allowedPublicKeys';
+/**
+ * @swagger
+ * tags:
+ *   name: Auth
+ *   description: Authenticate to prism chat api.
+*/
 
 const randomString = (min: number = 50, max: number = 60): string => {
   const length = Math.floor(Math.random() * (max - min + 1) + min);
@@ -36,6 +42,27 @@ const pubkey = async (req: IRequest, res: Response) => {
 		});
   }
 };
+
+/**
+ * @swagger
+ * /auth/request:
+ *   post:
+ *     summary: Request authentication string
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               parameter1:
+ *                 type: string
+ *                 description: kaka
+ *     responses:
+ *       200:
+ *         description: Return random string to be signed and returned for verification.
+ */
 
 const request = async (req: IRequest, res: Response) => {
   try {
@@ -83,6 +110,26 @@ const request = async (req: IRequest, res: Response) => {
   }
 };
 
+/**
+ * @swagger
+ * /auth/verify:
+ *   post:
+ *     summary: Send signed verification string to recieve auth token.
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               parameter1:
+ *                 type: string
+ *                 description: kaka
+ *     responses:
+ *       200:
+ *         description: Returns JWT for verification on other routes aver signature verification.
+ */
 const verify = async (req: IRequest, res: Response) => {
   try {
     await Joi.object({

@@ -41,6 +41,15 @@ app.use(
 				// 	url: 'http://localhost:3000',
 				// },
 			],
+			securityDefinitions: [
+				{
+					ApiKeyAuth: {
+						type: "apiKey",
+						in: "header",
+						name: "Authorization"
+					}
+				}
+			]
 		},
 		apis: ['./app/controllers/**/*.js', './app/controllers/**/*.ts', './app/routes/**/*.js', './app/routes/**/*.ts'],
 	}), { explorer: true })

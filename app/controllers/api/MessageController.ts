@@ -16,25 +16,41 @@ import allowedPublicKeys from '../../config/allowedPublicKeys';
  *   description: Manage sending and recieveing messages.
 */
 
+
 /**
  * @swagger
  * /message:
  *   post:
  *     summary: Send a message to a user registered at this server.
  *     tags: [Message]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               parameter1:
- *                 type: string
- *                 description: kaka
+ *     security:
+ *       - ApiKeyAuth: []
+ *     consumes:
+ *       - application/json
+ *     parameters:
+ *       - in: body
+ *         name: data
+ *         description: Request body.
+ *         schema:
+ *           type: object
+ *           required:
+ *             - Ipk
+ *           properties:
+ *             to:
+ *               type: string
+ *               description: The Ipk of the recpiant you are sending the message to.
+ *             data:
+ *               type: string
+ *               description: The encrypted layer 3 packet.
  *     responses:
  *       200:
- *         description: Message confirmation.
+ *         description: Successful response data
+ *         schema:
+ *           type: object
+ *           properties:
+ *             message:
+ *               type: string
+ *               description: Description of opperation.
  */
 const send = async (req: IRequest, res: Response) => {
 
@@ -107,19 +123,20 @@ const send = async (req: IRequest, res: Response) => {
  *   get:
  *     summary: Get all messages sent to you.
  *     tags: [Message]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               parameter1:
- *                 type: string
- *                 description: kaka
+ *     security:
+ *       - ApiKeyAuth: []
  *     responses:
  *       200:
- *         description: List of messages.
+ *         description: Successful response data
+ *         schema:
+ *           type: object
+ *           properties:
+ *             message:
+ *               type: string
+ *               description: Description of opperation.
+ *             messages:
+ *               type: string
+ *               description: List of cipher strings sent to your address.
  */
 const receive = async (req: IRequest, res: Response) => {
   try {

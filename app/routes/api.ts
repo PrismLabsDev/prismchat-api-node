@@ -11,6 +11,14 @@ import AuthenticateJWT from '../middleware/AuthenticateJWT';
 
 const router = Router();
 
+/**
+ * @swagger
+ * ApiKeyAuth:
+ *   type: apiKey
+ *   in: header
+ *   name: X-API-Key
+ */
+
 // Identify
 router.get('/', IdentifyController.identify);
 router.get('/identify', IdentifyController.identify);
